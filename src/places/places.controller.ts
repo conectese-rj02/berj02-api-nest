@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { CreatePlaceDto } from './dto/create-place.dto';
 import { Place } from './place.model';
 import { PlacesService } from './places.service';
 
@@ -14,26 +15,28 @@ export class PlacesController {
         return this.placesService.getAllPlaces();
     }
 
+    // GET http://localhost:3000/places/123456 - Ver as informações de um lugar específico
+    @Get(":id")
+    getPlaceById(@Param("id") id: string) {
+        return this.placesService.getPlaceById(id);
+    }
+
     // POST http://localhost:3000/places - Criar um novo lugar
     @Post()
     createPlace(
-        @Body("name") name: string,
-        @Body("site") site: string,
-        @Body("address") address: string,
-        @Body("image") image: string,
-        @Body("ticket") ticket: string,
-        @Body("description") description: string,
+        @Body() newPlace: CreatePlaceDto        
     ): Place {
 
-        return this.placesService.createPlace(
-            name,
-            site,
-            address,
-            image,
-            ticket,
-            description
-        );
+        return this.placesService.createPlace(newPlace);
 
+    }
+
+    // PATCH http://localhost:3000/places/jjnjnjsndjsnjn - Atualizar as informações de um lugar
+
+    // DELETE http://localhost:3000/places/jbjnkmlss - Excluir as informações de um lugar
+    @Delete(":id")
+    deletePlace(@Param("id") id: string): void {
+        return this.placesService.deletePlace(id);
     }
 
 }

@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Place, PlaceStatus } from './place.model';
+import { v4 as uuid } from "uuid";
+import { CreatePlaceDto } from './dto/create-place.dto';
 
 @Injectable()
 export class PlacesService {
@@ -10,17 +12,26 @@ export class PlacesService {
         return this.places;
     }
 
+    getPlaceById(id: string): Place {
+
+        const found = this.places.find((place) => place.id === id);
+
+        if (!found) {
+            throw new NotFoundException("ID não encontrado.");
+        }
+
+        return found;
+
+    }
+
     createPlace(
-        name: string,
-        site: string,
-        address: string,
-        image: string,
-        ticket: string,
-        description: string,
+        createPlaceDto: CreatePlaceDto
     ): Place {
 
+        const { name, site, address, image, ticket, description } = createPlaceDto;
+
         const place: Place = {
-            id: "",
+            id: uuid(),
             name,
             site,
             address,
@@ -33,6 +44,14 @@ export class PlacesService {
         this.places.push(place);
 
         return place;
+
+    }
+
+    deletePlace(id: string): void {
+
+        const found = this.getPlaceById(id);
+        
+        this.places = this.places.filter((place) => place.id !== found.id);
 
     }
 
