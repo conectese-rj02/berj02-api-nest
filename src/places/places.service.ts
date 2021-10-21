@@ -47,6 +47,16 @@ export class PlacesService {
 
     }
 
+    updatePlaceStatus(id: string, status: PlaceStatus): Place {
+
+        const place = this.getPlaceById(id);
+
+        place.status = status;
+
+        return place;
+
+    }
+
     deletePlace(id: string): void {
 
         const found = this.getPlaceById(id);

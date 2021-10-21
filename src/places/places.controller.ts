@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreatePlaceDto } from './dto/create-place.dto';
+import { UpdatePlaceStatusDto } from './dto/update-place-status.dto';
 import { Place } from './place.model';
 import { PlacesService } from './places.service';
 
@@ -31,8 +32,21 @@ export class PlacesController {
 
     }
 
-    // PATCH http://localhost:3000/places/jjnjnjsndjsnjn - Atualizar as informações de um lugar
+    // PATCH http://localhost:3000/places/123456/status
+    @Patch(":id/status")
+    updatePlaceStatus(
+        @Param("id") id: string,
+        @Body() newStatus: UpdatePlaceStatusDto
+    ) {
 
+        const { status } = newStatus;
+
+        return this.placesService.updatePlaceStatus(id, status);
+
+    }
+
+    // PATCH http://localhost:3000/places/jjnjnjsndjsnjn - Atualizar as informações de um lugar
+    
     // DELETE http://localhost:3000/places/jbjnkmlss - Excluir as informações de um lugar
     @Delete(":id")
     deletePlace(@Param("id") id: string): void {
