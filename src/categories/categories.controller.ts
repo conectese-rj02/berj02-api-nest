@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { Category } from './category.model';
+import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
 // http://localhost:3000/categories
@@ -11,25 +11,33 @@ export class CategoriesController {
 
     // GET http://localhost:3000/categories
     @Get()
-    getAllCategories(): Category[] {
+    async getAllCategories(): Promise<Category[]> {
 
-        return this.categoriesService.getAllCategories();
+        return await this.categoriesService.getAllCategories();
 
     }
 
+    // GET http://localhost:3000/categories/1
+    @Get(":id")
+    async getCategoryById(@Param("id") id: number): Promise<Category> {
+
+        return await this.categoriesService.getCategoryById(id);
+
+    }
+    
     // POST http://localhost:3000/categories
     @Post()
-    createCategory(@Body() newCategory: CreateCategoryDto): Category {
+    async createCategory(@Body() newCategory: CreateCategoryDto): Promise<Category> {
 
-        return this.categoriesService.createCategory(newCategory);
+        return await this.categoriesService.createCategory(newCategory);
 
     }
 
     // DELETE http://localhost:3000/categories/123456
     @Delete(":categoryId")
-    deleteCategory(@Param("categoryId") categoryId: string): void {
+    async deleteCategory(@Param("categoryId") categoryId: number): Promise<void> {
 
-        return this.categoriesService.deleteCategory(categoryId);
+        return await this.categoriesService.deleteCategory(categoryId);
 
     }
 
