@@ -23,7 +23,6 @@ export class PlacesController {
     async getPlaceById(@Param("id") id: string): Promise<Place> {
         return await this.placesService.getPlaceById(id);
     }
-
     
     // POST http://localhost:3000/places - Criar um novo lugar
     @Post()

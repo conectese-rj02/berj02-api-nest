@@ -1,7 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare } from 'bcrypt';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { JwtPayload } from './jwt-payload.interface';
 import { User } from './user.entity';
 import { UsersRepository } from './users.repository';
 
@@ -10,7 +12,8 @@ export class AuthService {
 
     constructor(
         @InjectRepository(UsersRepository)
-        private usersRepository: UsersRepository
+        private usersRepository: UsersRepository,
+        private jwtService: JwtService
     ) {}
 
     async signUp(authCredentialsDto: AuthCredentialsDto): Promise<User> {
@@ -19,7 +22,9 @@ export class AuthService {
 
     }
 
-    async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+    async signIn(authCredentialsDto: AuthCredentialsDto): Promise<{
+        accessToken: string;
+    }> {
 
         const { username, password } = authCredentialsDto;
 
@@ -27,7 +32,11 @@ export class AuthService {
 
         if (user && (await compare(password, user.password))) {
 
-            return "Deu certo!!! Seja bem-vindo!";
+            const payload: JwtPayload = { username };
+            
+            const accessToken: string = this.jwtService.sign(payload);
+
+            return { accessToken };
 
         } else {
             throw new UnauthorizedException("Usuário ou senha inválidos!");
